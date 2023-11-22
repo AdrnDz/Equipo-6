@@ -1,0 +1,32 @@
+#0.  Acomodar el entorno de trabajo
+#0.1 Realizar la limpieza del entorno
+rm(list=ls())    
+graphics.off()    
+
+#0.2 Intalación de paquetes
+library(foreign)
+library(factoextra)
+library(dplyr)
+library(knitr)
+library(tidyverse)
+library(readxl)
+paquetes <- c("tidyverse", "foreign", "factoextra", "ggplot2", "psych", "httr")
+for (i in paquetes) {if (!require(i, character.only = TRUE)) {install.packages(i);library(i, character.only = TRUE)} else {library(i, character.only = TRUE)}}
+
+#1. Cargar base
+PROYECTO <- read_csv("C:/Users/migue/Downloads/Base.csv")
+
+#2. Organizar base de datos
+#2.1 Filtrar variables
+Filtrado<- c("sexo","carrera_cve","p3")
+Datosfiltrados<-PROYECTO[,Filtrado]
+print(Datosfiltrados)
+#2.2 Quitar respuestas invalidas
+Datosfiltrados<-Datosfiltrados%>%drop_na()
+#2.3 Renombrar p3, que son los ingresos.
+colnames(Datosfiltrados)[colnames(Datosfiltrados) == "p3"] <- "Ingresos"
+
+#3 Prueba de hipótesis
+DatosMujeres <- Datosfiltrados %>% filter(sexo == 2)
+t_test_result <- t.test(DatosMujeres$Ingresos)
+t.test(DatosMujeres,mu=10500,alternative = "less")
